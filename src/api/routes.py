@@ -11,13 +11,11 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 
+api = Blueprint('api', __name__)
+
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "Lv414Lv426Sv324Pv319Fa714"  # Change this!
 jwt = JWTManager(app)
-
-
-api = Blueprint('api', __name__)
-
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -28,7 +26,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@app.route('/signup', methods=['POST'])
+@api.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
     new_user = User(email=body["email"],password=body["password"])
@@ -37,7 +35,7 @@ def signup():
     print("I will sign in")
     return jsonify(new_user.serialize), 200
 
-@app.route("/login", methods=["POST"])
+@api.route("/login", methods=["POST"])
 def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
@@ -58,7 +56,7 @@ def login():
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
-@app.route("/private", methods=["GET"])
+@api.route("/private", methods=["GET"])
 @jwt_required()
 def protected():
     # Access the identity of the current user with get_jwt_identity
@@ -66,6 +64,4 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 
-if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3001))
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+
