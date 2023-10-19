@@ -9,13 +9,8 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
-app = Flask(__name__)
 
 api = Blueprint('api', __name__)
-
-# Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "Lv414Lv426Sv324Pv319Fa714"  # Change this!
-jwt = JWTManager(app)
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -29,24 +24,29 @@ def handle_hello():
 @api.route('/signup', methods=['POST'])
 def signup():
     body = request.get_json()
-    new_user = User(email=body["email"],password=body["password"])
-    db.session.add(new_user)
-    db.session.commit()
-    print("I will sign in")
-    return jsonify(new_user.serialize), 200
+    print(body)
+    user = User.query.filter_by(email=body["email"]).first()
+    print(user)
+    if user == None:
+        new_user = User(email=body["email"],password=body["password"], is_active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        response_body = {
+            "msg": "New user created"
+        }
+        return jsonify(response_body), 200
+    else:
+        return jsonify({"msg": "There is already a user created with this email"}), 401
 
 @api.route("/login", methods=["POST"])
 def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     user = User.query.filter_by(email=email).first()
+    print(user)
+
     if user is None:
         return jsonify({"msg": "The user doesnt exist"}), 401
-    
-    print(user)
-    print(user.serialize)
-    print(user.email)
-    print(user.password)
 
     if password != user.password:
         return jsonify({"msg": "Wrong password"}), 401
