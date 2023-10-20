@@ -26,7 +26,10 @@ export const Login = () => {
                 <label className="mt-2" htmlFor="exampleInputPassword1">Password</label>
                 <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="form-control mt-2" id="exampleInputPassword1" placeholder="Password"/>
             </div>
-            <button type="submit" className="btn btn-primary mt-4">Submit</button>
+            <button type="submit" className="btn btn-primary mt-4 me-4">Log in</button>
+            <Link to="/signup">
+                <button type="submit" className="btn btn-success mt-4">Create new account</button>
+            </Link>
             </form>
             }
             

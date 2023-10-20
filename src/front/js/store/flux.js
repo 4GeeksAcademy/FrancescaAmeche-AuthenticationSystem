@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			auth: false
+			auth: false,
+			
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -52,6 +53,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 						localStorage.setItem("token", data.access_token);
 						console.log(data)
 					});
+			},
+
+			signup: (email, password) => {
+				console.log("signup desde flux")
+				fetch("https://bookish-xylophone-66w9459rvxjf4jv7-3001.app.github.dev/api/signup", {
+					method: "POST",
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify(
+						{
+							"email":email,
+							"password": password
+						}
+					)
+				})
+				.then((response) => response.json())
+				.then((data) => console.log(data))
 			},
 
 			getMessage: async () => {
